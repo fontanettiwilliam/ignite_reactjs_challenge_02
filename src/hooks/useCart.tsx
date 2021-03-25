@@ -87,7 +87,17 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
 
   const removeProduct = (productId: number) => {
     try {
-      // TODO
+      const newCart = [...cart];
+      const findIndexProduct = cart.findIndex((item) => item.id === productId);
+
+      if (findIndexProduct !== -1) {
+        newCart.splice(findIndexProduct, 1);
+
+        localStorage.setItem("@RocketShoes:cart", JSON.stringify(newCart));
+        setCart(newCart);
+        toast.success("Produto removido do carrinho!");
+        return;
+      }
     } catch {
       toast.error("Erro na remoção do produto");
     }
@@ -98,13 +108,6 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      /**
-       * - O valor atualizado do carrinho deve ser perpetuado no **localStorage** utilizando o método `setItem`.
-       * - Se a quantidade do produto for menor ou igual a zero, sair da função **updateProductAmount** instantaneamente.
-       * - Verificar se existe no estoque a quantidade desejada do produto. Caso contrário, utilizar o método `error` da **react-toastify** com a seguinte mensagem:
-       */
-      console.log("productId", productId);
-      console.log("amount", amount);
       const newCart = [...cart];
 
       const responseStock = await api.get(`stock?id=${productId}`);
