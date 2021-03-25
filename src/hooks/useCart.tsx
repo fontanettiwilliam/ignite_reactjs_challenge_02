@@ -38,6 +38,10 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     toast.success("Produto adicionado ao carrinho!");
   };
 
+  const stockInsufficientMessage = () => {
+    toast.error("Quantidade solicitada fora de estoque");
+  };
+
   const addProduct = async (productId: number) => {
     try {
       const newCart = [...cart];
@@ -56,7 +60,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
         newCart[findIndexProduct].amount += 1;
 
         if (stockProduct.amount < newCart[findIndexProduct].amount) {
-          toast.error("Quantidade solicitada fora de estoque");
+          stockInsufficientMessage();
           return;
         }
         successAddProduct(newCart);
@@ -68,7 +72,7 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
       product.amount = 1;
 
       if (stockProduct.amount < product.amount) {
-        toast.error("Quantidade solicitada fora de estoque");
+        stockInsufficientMessage();
         return;
       }
 
