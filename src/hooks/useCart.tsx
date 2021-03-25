@@ -98,7 +98,35 @@ export function CartProvider({ children }: CartProviderProps): JSX.Element {
     amount,
   }: UpdateProductAmount) => {
     try {
-      // TODO
+      /**
+       * - O valor atualizado do carrinho deve ser perpetuado no **localStorage** utilizando o método `setItem`.
+       * - Se a quantidade do produto for menor ou igual a zero, sair da função **updateProductAmount** instantaneamente.
+       * - Verificar se existe no estoque a quantidade desejada do produto. Caso contrário, utilizar o método `error` da **react-toastify** com a seguinte mensagem:
+       */
+      console.log("productId", productId);
+      console.log("amount", amount);
+      const newCart = [...cart];
+
+      const responseStock = await api.get(`stock?id=${productId}`);
+      const stockProduct: Stock = responseStock.data[0];
+
+      if (!stockProduct) {
+        toast.error("Produto não encontrado no estoque");
+        return;
+      }
+
+      const findIndexProduct = cart.findIndex((item) => item.id === productId);
+
+      if (findIndexProduct !== -1) {
+        newCart[findIndexProduct].amount = amount;
+
+        if (stockProduct.amount < newCart[findIndexProduct].amount) {
+          stockInsufficientMessage();
+          return;
+        }
+        successAddProduct(newCart);
+        return;
+      }
     } catch {
       toast.error("Erro na alteração de quantidade do produto");
     }
